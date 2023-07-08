@@ -6,7 +6,7 @@ env:
   UBUNTU_ENV: dev-env-ubuntu
   CENTOS_ENV: dev-env-centos7
   IMG_NAME: starrocks
-  ALIYUN_REGISTRY_URL: registry.cn-shenzhen.aliyuncs.com
+  ALIYUN_REGISTRY_URL: registry.cn-guangzhou.aliyuncs.com
   MY_NAMCESPACE: public_docker_images
   MY_ALIYUN_REGISTRY: public_img
 
@@ -20,5 +20,5 @@ jobs:
         run: |
           docker pull $IMG_NAME/$CENTOS_ENV:2.5-latest
           docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
-          docker tag $IMG_NAME/$CENTOS_ENV:2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:2.5-latest
+          docker tag $IMG_NAME/$CENTOS_ENV:2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$IMG_NAME/$CENTOS_ENV:2.5-latest
           docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:2.5-latest
