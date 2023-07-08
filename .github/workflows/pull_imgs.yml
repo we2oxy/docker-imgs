@@ -46,7 +46,6 @@ jobs:
           docker images
           for i in `cat img_version.txt`;do docker rmi $IMG_NAME/$CENTOS_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$CENTOS_ENV:${i};done
           docker images
-jobs:
   ubuntu:
     runs-on: ubuntu-latest
 
