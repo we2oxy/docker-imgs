@@ -21,5 +21,5 @@ jobs:
           docker pull $IMG_NAME/$CENTOS_ENV:2.5-latest
           docker images
           docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
-          docker tag $CENTOS_ENV:2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$IMG_NAME/$MY_ALIYUN_REGISTRY:2.5-latest
+          docker tag 2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$IMG_NAME/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
           docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:2.5-latest
