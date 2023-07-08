@@ -45,7 +45,6 @@ jobs:
           # tag
           for i in `cat img_version.txt`;do docker tag $IMG_NAME/$CENTOS_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$CENTOS_ENV-${i};done
           for i in `cat img_version.txt`;do docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$CENTOS_ENV-${i};done
-          docker rmi $(docker images -q)
           # push
           for i in `cat img_version.txt`;do docker tag $IMG_NAME/$UBUNTU_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$UBUNTU_ENV-${i};done
           for i in `cat img_version.txt`;do docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$UBUNTU_ENV-${i};done
