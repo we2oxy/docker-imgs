@@ -7,11 +7,11 @@ env:
   CENTOS_ENV: dev-env-centos7
   IMG_NAME: starrocks
   ALIYUN_REGISTRY_URL: registry.cn-guangzhou.aliyuncs.com
-  MY_NAMCESPACE: mydocker_imgs
+  MY_NAMESPACE: mydocker_imgs
   MY_ALIYUN_REGISTRY: docker-imgs
 
 jobs:
-  build:
+  centos:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,16 +35,50 @@ jobs:
         run: |
           docker rmi $(docker images -q)
           docker images
-          #docker pull $IMG_NAME/$CENTOS_ENV:2.5-latest
           docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
-          #docker tag $IMG_NAME/$CENTOS_ENV:2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
-          #docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
-          echo -e "3.1-latest" >img_version.txt
-          for i in `cat img_version.txt`;do docker pull $IMG_NAME/$CENTOS_ENV:${i} && docker pull $IMG_NAME/$UBUNTU_ENV:${i} ;done
-          docker images
+          echo -e "2.5-latest" >img_version.txt
+          for i in `cat img_version.txt`;do docker pull $IMG_NAME/$CENTOS_ENV:${i};done
           # tag
-          for i in `cat img_version.txt`;do docker tag $IMG_NAME/$CENTOS_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$CENTOS_ENV-${i};done
-          for i in `cat img_version.txt`;do docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$CENTOS_ENV-${i};done
+          for i in `cat img_version.txt`;do docker tag $IMG_NAME/$CENTOS_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$CENTOS_ENV:${i};done
           # push
-          for i in `cat img_version.txt`;do docker tag $IMG_NAME/$UBUNTU_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$UBUNTU_ENV-${i};done
-          for i in `cat img_version.txt`;do docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$IMG_NAME-$UBUNTU_ENV-${i};done
+          for i in `cat img_version.txt`;do docker push $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$CENTOS_ENV:${i};done
+          # rm imaegs
+          docker images
+          for i in `cat img_version.txt`;do docker rmi $IMG_NAME/$CENTOS_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$CENTOS_ENV:${i};done
+          docker images
+jobs:
+  ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Init Building Dependencies
+        shell: bash
+        env:
+          DEBIAN_FRONTEND: noninteractive 
+        run: |
+          sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+          sudo lsb_release -a
+          sudo cat /etc/os-release
+          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          sudo -E swapoff -a
+          ulimit -n 4096
+          df -hP
+      - name: Run a multi-line scripts
+        run: |
+          docker rmi $(docker images -q)
+          docker images
+          docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
+          echo -e "2.5-latest" >img_version.txt
+          for i in `cat img_version.txt`;do docker pull $IMG_NAME/$UBUNTU_ENV:${i};done
+          # tag
+          for i in `cat img_version.txt`;do docker tag $IMG_NAME/$UBUNTU_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$UBUNTU_ENV:${i};done
+          # push
+          for i in `cat img_version.txt`;do docker push $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$UBUNTU_ENV:${i};done
+          # rm imaegs
+          docker images
+          for i in `cat img_version.txt`;do docker rmi $IMG_NAME/$UBUNTU_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$UBUNTU_ENV:${i};done
+          docker images
