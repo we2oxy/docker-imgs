@@ -1,4 +1,4 @@
-name: pull imgs
+name: pull
 on:
   repository_dispatch:
   workflow_dispatch:
