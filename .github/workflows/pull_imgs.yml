@@ -36,7 +36,7 @@ jobs:
           docker rmi $(docker images -q)
           docker images
           docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
-          echo -e "2.5-latest" >img_version.txt
+          echo -e "3.0-latest" >img_version.txt
           for i in `cat img_version.txt`;do docker pull $IMG_NAME/$CENTOS_ENV:${i};done
           # tag
           for i in `cat img_version.txt`;do docker tag $IMG_NAME/$CENTOS_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$CENTOS_ENV:${i};done
@@ -71,7 +71,7 @@ jobs:
           docker rmi $(docker images -q)
           docker images
           docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
-          echo -e "2.5-latest" >img_version.txt
+          echo -e "3.0-latest" >img_version.txt
           for i in `cat img_version.txt`;do docker pull $IMG_NAME/$UBUNTU_ENV:${i};done
           # tag
           for i in `cat img_version.txt`;do docker tag $IMG_NAME/$UBUNTU_ENV:${i} $ALIYUN_REGISTRY_URL/$MY_NAMESPACE/$IMG_NAME-$UBUNTU_ENV:${i};done
