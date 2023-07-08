@@ -18,9 +18,13 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run a multi-line scripts
         run: |
-          docker pull $IMG_NAME/$CENTOS_ENV:2.5-latest
+          docker rmi $(docker images -q)
           docker images
+          #docker pull $IMG_NAME/$CENTOS_ENV:2.5-latest
           docker login --username=${{ secrets.USER_NAME }} --password=${{ secrets.PASSWD }} $ALIYUN_REGISTRY_URL
-          docker tag $IMG_NAME/$CENTOS_ENV:2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
+          #docker tag $IMG_NAME/$CENTOS_ENV:2.5-latest $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
+          #docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
+          echo -e "dev-env-centos7:3.0-latest\ndev-env-centos7:3.1-latest\ndev-env-ubuntu:2.5-latest\ndev-env-ubuntu:3.0-latest\ndev-env-ubuntu:3.1-latest" >img.txt
+          for i in `cat img.txt`;do docker pull starrocks/${i} ;done
           docker images
-          docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:$CENTOS_ENV-2.5-latest
+          for i in `cat img.txt`;do docker tag starrocks/${i} $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:starrocks-${i} && docker push $ALIYUN_REGISTRY_URL/$MY_NAMCESPACE/$MY_ALIYUN_REGISTRY:starrocks-${i};done
